@@ -64,7 +64,6 @@ jobs:
                 mv dist/fibonacci.exe ${{ matrix.os }}/dist
                 mv build/fibonacci ${{ matrix.os }}/build
                 cd ${{ matrix.os }}/build
-                ls
                 ren fibonacci fibonacci-onefile
             
             - name: Upload build artifacts
