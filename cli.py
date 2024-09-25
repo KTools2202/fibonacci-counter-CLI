@@ -14,6 +14,10 @@ def main():
 
     args = parser.parse_args()
 
+    valid_displays = ["all", "position"]
+    if args.display not in valid_displays:
+        print("Invalid display argument! Valid arguments: all, position.")
+        exit()
     if args.print:
         print(f"{fibonacci(int(args.count), str(args.display))}")
     if args.copy:
@@ -23,16 +27,12 @@ def main():
 
 def fibonacci(amount, display):
     fibList = [0, 1]
+    for i in range(amount):
+        fibList.append(fibList[-2] + fibList[-1])
     if display == "all":
-        for i in range(amount):
-            fibList.append(fibList[-2] + fibList[-1])
         return ' '.join(map(str, fibList[1:]))
     elif display == "position":
-        for i in range(amount):
-            fibList.append(fibList[-2] + fibList[-1])
         return fibList[-1]
-    else:
-        return "--display must be either \"all\" or \"position\"."
 
 
 if __name__ == "__main__":
