@@ -1,0 +1,75 @@
+name: build app
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    build:
+        name: build app on ${{ matrix.runner }}
+        runs-on: ${{ matrix.runner }}
+        strategy:
+            matrix:
+                os: ["windows", "mac", "linux"]
+                include:
+                    - os: "windows"
+                      runner: "windows-latest"
+                    - os: "mac"
+                      runner: "macos-latest"
+                    - os: "linux"
+                      runner: "ubuntu-latest"
+        steps:
+            - name: Checkout ref
+              uses: actions/checkout@v4
+            
+            - name: Install dependencies
+              run: |
+                pip install -r requirements.txt
+                pip install pyinstaller
+            
+            - name: Build app
+              run: pyinstaller cli.py --name fibonacci
+
+            - name: Move files (Linux/Mac)
+              if: ${{ matrix.runner != 'windows-latest' }}
+              run: |
+                mkdir -p ${{ matrix.os }}/dist ${{ matrix.os }}/build
+                mv dist/fibonacci ${{ matrix.os }}/dist/fibonacci
+                mv build/fibonacci ${{ matrix.os }}/build/fibonacci-normal
+            
+            - name: Move files (Windows)
+              if: ${{ matrix.runner == 'windows-latest' }}
+              run: |
+                mkdir -p ${{ matrix.os }}/dist
+                mkdir -p ${{ matrix.os }}/build
+                mv dist/fibonacci/ ${{ matrix.os }}/dist
+                mv build/fibonacci/ ${{ matrix.os }}/build
+                cd ${{ matrix.os}}/dist/
+                ren fibonacci fibonacci-normal
+                cd ../build/
+                ren fibonacci fibonacci-normal
+            
+            - name: Build in onefile mode
+              run: pyinstaller --onefile cli.py --name fibonacci
+            
+            - name: Move files (again)
+              if: ${{ matrix.runner != 'windows-latest' }}
+              run: |
+                mv dist/fibonacci ${{ matrix.os }}/dist/fibonacci
+                mv build/fibonacci ${{ matrix.os }}/build/fibonacci-onefile
+
+            - name: Move files (again, Windows)
+              if: ${{ matrix.runner == 'windows-latest' }}
+              run: |
+                mv dist/fibonacci.exe ${{ matrix.os }}/dist
+                mv build/fibonacci ${{ matrix.os }}/build
+                cd ${{ matrix.os }}/build
+                ls
+                ren fibonacci fibonacci-onefile
+            
+            - name: Upload build artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                name: ${{ matrix.os }}-artifacts
+                path: ${{ matrix.os }}
+                
