@@ -1,8 +1,10 @@
 import pyperclip
 import argparse
+from library.fibonacciCounter import fibonacciCounter
+
+fibonacci = fibonacciCounter()
 
 
-# argparsing
 def main():
     parser = argparse.ArgumentParser(description="Fibonacci counting")
     parser.add_argument("--count", required=True,
@@ -21,22 +23,12 @@ def main():
         print("Invalid display argument! Valid arguments: all, position.")
         exit()
     if args.print:
-        print(f"{fibonacci(int(args.count), str(args.display))}")
+        print(f"{fibonacci.counter(int(args.count), str(args.display))}")
     if args.copy:
-        pyperclip.copy(fibonacci(int(args.count), str(args.display)))
+        pyperclip.copy(fibonacci.counter(int(args.count), str(args.display)))
         print("Result copied to clipboard.")
     if not args.print and not args.copy:
         print("You kinda need to tell me a way to copy the output... For me to be of use... Or something.")
-
-
-def fibonacci(amount, display):
-    fibList = [0, 1]
-    for i in range(amount):
-        fibList.append(fibList[-2] + fibList[-1])
-    if display == "all":
-        return ' '.join(map(str, fibList[1:]))
-    elif display == "position":
-        return fibList[-1]
 
 
 if __name__ == "__main__":
