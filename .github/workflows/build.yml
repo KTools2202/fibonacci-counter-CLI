@@ -28,43 +28,53 @@ jobs:
                 pip install pyinstaller
             
             - name: Build app
-              run: pyinstaller cli.py --name fibonacci
+              run: |
+                pyinstaller cli.py --name fibonacci-CLI
+                pyinstaller gui.py --noconsole --name fibonacci-GUI
 
             - name: Move files (Linux/Mac)
               if: ${{ matrix.runner != 'windows-latest' }}
               run: |
                 mkdir -p ${{ matrix.os }}/dist ${{ matrix.os }}/build
-                mv dist/fibonacci ${{ matrix.os }}/dist/fibonacci
-                mv build/fibonacci ${{ matrix.os }}/build/fibonacci-normal
+                mv dist/fibonacci-CLI ${{ matrix.os }}/dist/fibonacci-CLI
+                mv build/fibonacci-CLI ${{ matrix.os }}/build/fibonacci-CLI_normal-build
+                mv dist/fibonacci-GUI ${{ matrix.os }}/dist/fibonacci-GUI
+                mv build/fibonacci-GUI ${{ matrix.os }}/build/fibonacci-GUI-normal_build
             
             - name: Move files (Windows)
               if: ${{ matrix.runner == 'windows-latest' }}
               run: |
                 mkdir -p ${{ matrix.os }}/dist
                 mkdir -p ${{ matrix.os }}/build
-                mv dist/fibonacci/ ${{ matrix.os }}/dist
-                mv build/fibonacci/ ${{ matrix.os }}/build
-                cd ${{ matrix.os}}/dist/
-                ren fibonacci fibonacci-normal
-                cd ../build/
-                ren fibonacci fibonacci-normal
+                mv dist/fibonacci-CLI/ ${{ matrix.os }}/dist
+                mv build/fibonacci-CLI/ ${{ matrix.os }}/build
+                cd ${{ matrix.os}}/build/
+                ren fibonacci-CLI fibonacci-CLI_normal-build
+                ren fibonacci-GUI fibonacci-GUI_normal-build
             
             - name: Build in onefile mode
-              run: pyinstaller --onefile cli.py --name fibonacci
+              run: |
+                pyinstaller --onefile cli.py --name fibonacci-CLI
+                pyinstaller --onefile gui.py --noconsole --name fibonacci-GUI
             
-            - name: Move files (again)
+            - name: Move files (again, Linux/Mac)
               if: ${{ matrix.runner != 'windows-latest' }}
               run: |
-                mv dist/fibonacci ${{ matrix.os }}/dist/fibonacci
-                mv build/fibonacci ${{ matrix.os }}/build/fibonacci-onefile
+                mv dist/fibonacci-CLI ${{ matrix.os }}/dist/fibonacci-CLI
+                mv build/fibonacci-CLI ${{ matrix.os }}/build/fibonacci-CLI-onefile
+                mv dist/fibonacci-GUI ${{ matrix.os }}/dist/fibonacci-GUI
+                mv build/fibonacci-GUI ${{ matrix.os }}/build/fibonacci-GUI-onefile
 
             - name: Move files (again, Windows)
               if: ${{ matrix.runner == 'windows-latest' }}
               run: |
-                mv dist/fibonacci.exe ${{ matrix.os }}/dist
-                mv build/fibonacci ${{ matrix.os }}/build
+                mv dist/fibonacci-CLI.exe ${{ matrix.os }}/dist
+                mv build/fibonacci-CLI ${{ matrix.os }}/build
+                mv dist/fibonacci-GUI.exe ${{ matrix.os }}/dist
+                mv build/fibonacci-GUI ${{ matrix.os }}/build
                 cd ${{ matrix.os }}/build
-                ren fibonacci fibonacci-onefile
+                ren fibonacci-CLI fibonacci-CLI_onefile-build
+                ren fibonacci-GUI fibonacci-GUI_onefile-build
             
             - name: Upload build artifacts
               uses: actions/upload-artifact@v4

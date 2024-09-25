@@ -28,7 +28,8 @@ def main():
         pyperclip.copy(fibonacci.counter(int(args.count), str(args.display)))
         print("Result copied to clipboard.")
     if not args.print and not args.copy:
-        print("You kinda need to tell me a way to copy the output... For me to be of use... Or something.")
+        print("You kinda need to tell me a way to copy the output...",
+              "For me to be of use... Or something.")
 
 
 if __name__ == "__main__":
