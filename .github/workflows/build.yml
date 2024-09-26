@@ -48,14 +48,16 @@ jobs:
                 mkdir -p ${{ matrix.os }}/build
                 mv dist/fibonacci-CLI/ ${{ matrix.os }}/dist
                 mv build/fibonacci-CLI/ ${{ matrix.os }}/build
-                cd ${{ matrix.os}}/build/
+                mv dist/fibonacci-GUI/ ${{ matrix.os }}/dist
+                mv build/fibonacci-GUI/ ${{ matrix.os }}/build
+                cd ${{ matrix.os }}/build/
                 ren fibonacci-CLI fibonacci-CLI_normal-build
                 ren fibonacci-GUI fibonacci-GUI_normal-build
             
             - name: Build in onefile mode
               run: |
-                pyinstaller --onefile cli.py --name fibonacci-CLI
-                pyinstaller --onefile gui.py --noconsole --name fibonacci-GUI
+                pyinstaller --onefile cli.py --name fibonacci-CLI -y
+                pyinstaller --onefile gui.py --noconsole --name fibonacci-GUI -y
             
             - name: Move files (again, Linux/Mac)
               if: ${{ matrix.runner != 'windows-latest' }}
